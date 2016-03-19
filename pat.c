@@ -53,10 +53,10 @@
  * Version
  * 0.1  detect pulses and flash fan failure lamps if RPM is out of spec
  *	for the ebmpapst 4606 ZH
+ * 0.2 XC8 stripped version
  */
 
 #include <xc.h>
-#include <plib/timers.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "pat.h"
@@ -67,12 +67,10 @@ int16_t sw_work(void);
 void init_fanmon(void);
 uint8_t init_fan_params(void);
 
-//#pragma udata
 volatile struct V_data V;
 volatile union Obits2 LEDS;
 uint8_t str[12];
-//#pragma udata access ACCESSBANK
-uint16_t timer0_off = TIMEROFFSET, timer1_off = 65480;
+uint16_t timer0_off = TIMEROFFSET, timer1_off = SAMPLEFREQ;
 
 const uint8_t build_date[] = __DATE__, build_time[] = __TIME__;
 const uint8_t
@@ -86,9 +84,9 @@ spacer0[] = " ",
 	boot0[] = "\r\n Boot RCON ",
 	boot1[] = "\r\n Boot STKPTR ";
 
-#pragma warning disable 752  // disable compiler bug
+#pragma warning disable 752  // disable compiler bug for 8 bit math
 
-void __interrupt tm_handler(void) // timer/serial functions are handled here
+void interrupt high_priority tm_handler(void) // timer/serial functions are handled here
 {
 	static uint8_t led_cache = 0xff;
 	static uint16_t total_spins = 0;
@@ -213,7 +211,7 @@ int16_t sw_work(void)
 		blink_led(2, ON, ON); // LED blinks
 	}
 
-	V.led_pwm_set[1]++; // testing with sweep
+	V.led_pwm_set[1]++; // testing with sweep modulation
 	V.led_pwm_set[2]++;
 
 	return 0;
@@ -251,9 +249,11 @@ void init_fanmon(void)
 	Blink_Init();
 	is_led_blinking(0); // kill warning
 	is_led_on(0); // kill warning
-	T0CON = TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_64; // led blinker
+	//T0CON = TIMER_INT_ON & T0_16BIT & T0_SOURCE_INT & T0_PS_1_64; // led blinker
+	T0CON = 0b10000101;
 	WRITETIMER0(timer0_off); //	start timer0 at ~1/2 second ticks
-	T1CON = TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF; // PWM timer
+	//T1CON = TIMER_INT_ON & T1_16BIT_RW & T1_SOURCE_INT & T1_PS_1_8 & T1_OSC1EN_OFF & T1_SYNC_EXT_OFF; // PWM timer
+	T1CON = 0b10110101;
 	WRITETIMER1(timer1_off);
 
 	/* Light-link data input */
