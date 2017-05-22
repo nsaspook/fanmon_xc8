@@ -19,32 +19,32 @@ typedef signed long long int64_t;
 #endif
 
 typedef struct V_data { // ISR data structure
-	uint16_t blink, blink_out, blink_alt, spin_count1, spin_count2, spurious_int;
-	uint8_t valid : 1;
-	uint8_t comm : 1;
-	uint8_t comm_state;
-	uint8_t spinning : 1;
-	uint8_t fan1_spinning : 1;
-	uint8_t fan2_spinning : 1;
-	uint8_t boot_code : 1;
-	uint8_t rx_data, tx_data;
-	uint8_t led_pwm[8], led_pwm_set[8];
+    uint16_t blink, blink_out, blink_alt, spin_count1, spin_count2, spurious_int;
+    uint8_t valid : 1;
+    uint8_t comm : 1;
+    uint8_t comm_state;
+    uint8_t spinning : 1;
+    uint8_t fan1_spinning : 1;
+    uint8_t fan2_spinning : 1;
+    uint8_t boot_code : 1;
+    uint8_t rx_data, tx_data;
+    uint8_t led_pwm[8], led_pwm_set[8];
 } V_data;
 
 typedef struct OUTBITS2 {
-	uint8_t b0 : 1;
-	uint8_t b1 : 1;
-	uint8_t b2 : 1;
-	uint8_t b3 : 1;
-	uint8_t b4 : 1;
-	uint8_t b5 : 1;
-	uint8_t b6 : 1;
-	uint8_t b7 : 1;
+    uint8_t b0 : 1;
+    uint8_t b1 : 1;
+    uint8_t b2 : 1;
+    uint8_t b3 : 1;
+    uint8_t b4 : 1;
+    uint8_t b5 : 1;
+    uint8_t b6 : 1;
+    uint8_t b7 : 1;
 } OUTBITS_TYPE2;
 
 union Obits2 {
-	uint8_t out_byte;
-	OUTBITS_TYPE2 out_bits;
+    uint8_t out_byte;
+    OUTBITS_TYPE2 out_bits;
 };
 
 #define TRUE	1
