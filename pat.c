@@ -64,16 +64,16 @@
 #include <string.h>
 
 int16_t sw_work(void);
-void init_fanmon(void);
-uint8_t init_fan_params(void);
+uint8_t init_fanmon(void);
+int8_t init_fan_params(void);
 
 volatile struct V_data V;
 volatile union Obits2 LEDS;
-uint8_t str[12];
-uint16_t timer0_off = TIMEROFFSET, timer1_off = SAMPLEFREQ;
+static uint8_t str[12];
+static uint16_t timer0_off = TIMEROFFSET, timer1_off = SAMPLEFREQ;
 
-const uint8_t build_date[] = __DATE__, build_time[] = __TIME__;
-const uint8_t
+static const uint8_t build_date[] = __DATE__, build_time[] = __TIME__;
+static const uint8_t
 spacer0[] = " ",
 	spacer1[] = "\r\n",
 	status0[] = "\r\n OK ",
@@ -199,7 +199,6 @@ void interrupt high_priority tm_handler(void) // timer/serial functions are hand
 /* main loop routine */
 int16_t sw_work(void)
 {
-
 	if (V.valid)
 		ClrWdt(); // reset watchdog
 
@@ -217,7 +216,7 @@ int16_t sw_work(void)
 	return 0;
 }
 
-void init_fanmon(void)
+uint8_t init_fanmon(void)
 {
 	/*
 	 * check for a clean POR
@@ -274,9 +273,10 @@ void init_fanmon(void)
 
 	/* Enable all high priority interrupts */
 	INTCONbits.GIEH = 1;
+	return V.boot_code;
 }
 
-uint8_t init_fan_params(void)
+int8_t init_fan_params(void)
 {
 	V.spin_count1 = 0;
 	V.spin_count2 = 0;
