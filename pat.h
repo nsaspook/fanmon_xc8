@@ -2,6 +2,8 @@
 #define PAT_H_INCLUDED
 //	hardware defines
 
+#include <stdbool.h>
+
 #ifdef INTTYPES
 #include <stdint.h>
 #else
@@ -47,14 +49,12 @@ union Obits2 {
     OUTBITS_TYPE2 out_bits;
 };
 
-#define TRUE	1
-#define FALSE	0
-#define	ON	1
-#define	OFF	0
-#define	LEDON	0	// sink LED ON
-#define	LEDOFF	1
-#define DRIVEON		0	// pwm LED on/OFF states
-#define DRIVEOFF	1
+#define	ON	true
+#define	OFF	false
+#define	LEDON	false	// sink LED ON
+#define	LEDOFF	true
+#define DRIVEON		false	// pwm LED on/OFF states
+#define DRIVEOFF	true
 
 #define	TIMEROFFSET	49400		// timer0 16bit counter value for ~0.5 second to overflow 49400
 #define	SAMPLEFREQ	65477		// timer1 3.9khz 65477

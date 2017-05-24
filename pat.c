@@ -93,34 +93,34 @@ void interrupt high_priority tm_handler(void) // timer/serial functions are hand
 
 	RPMLED = LEDON;
 	/* check for expected interrupts */
-	V.valid = FALSE;
+	V.valid = false;
 
 	if (INTCONbits.INT0IF) {
-		V.valid = TRUE;
-		INTCONbits.INT0IF = FALSE;
+		V.valid = true;
+		INTCONbits.INT0IF = false;
 		V.spin_count1++;
 	}
 
 	if (INTCON3bits.INT2IF) {
-		V.valid = TRUE;
-		INTCON3bits.INT2IF = FALSE;
+		V.valid = true;
+		INTCON3bits.INT2IF = false;
 		V.spin_count2++;
 	}
 
 	if (PIR1bits.RCIF) { // is data from RS-232 port
-		V.valid = TRUE;
+		V.valid = true;
 		V.rx_data = RCREG;
 		if (RCSTAbits.OERR) {
 			RCSTAbits.CREN = 0; // clear overrun
 			RCSTAbits.CREN = 1; // re-enable
 		}
-		V.comm = TRUE;
+		V.comm = true;
 	}
 
 	if (PIR1bits.TMR1IF) { //      Timer1 int handler PWM lamp effects
-		V.valid = TRUE;
+		V.valid = true;
 
-		PIR1bits.TMR1IF = FALSE; //      clear int flag
+		PIR1bits.TMR1IF = false; //      clear int flag
 		WRITETIMER1(timer1_off);
 
 		/* LED off at pwm value 0 and turn on at pwm_set */
@@ -146,21 +146,21 @@ void interrupt high_priority tm_handler(void) // timer/serial functions are hand
 
 	if (INTCONbits.TMR0IF) { //      check timer0 irq time timer
 		RPMOUT = !RPMOUT;
-		V.valid = TRUE;
-		INTCONbits.TMR0IF = FALSE; //      clear interrupt flag
+		V.valid = true;
+		INTCONbits.TMR0IF = false; //      clear interrupt flag
 		WRITETIMER0(timer0_off);
 
 		// check for fan motor movement
 		total_spins = V.spin_count1 + V.spin_count2;
-		V.fan1_spinning = (V.spin_count1 >= FAN1_PULSE) ? TRUE : FALSE;
-		V.fan2_spinning = (V.spin_count2 >= FAN2_PULSE) ? TRUE : FALSE;
+		V.fan1_spinning = (V.spin_count1 >= FAN1_PULSE) ? true : false;
+		V.fan2_spinning = (V.spin_count2 >= FAN2_PULSE) ? true : false;
 
 		if (total_spins >= RPM_COUNT) {
-			V.spinning = TRUE;
+			V.spinning = true;
 			V.comm_state = 3;
 			RELAY1 = DRIVEOFF;
 		} else {
-			V.spinning = FALSE;
+			V.spinning = false;
 			V.comm_state = 2;
 			RELAY1 = DRIVEON;
 		}
@@ -222,12 +222,12 @@ void init_fanmon(void)
 	/*
 	 * check for a clean POR
 	 */
-	V.boot_code = FALSE;
+	V.boot_code = false;
 	if (RCON != 0b0011100)
-		V.boot_code = TRUE;
+		V.boot_code = true;
 
 	if (STKPTRbits.STKFUL || STKPTRbits.STKUNF) {
-		V.boot_code = TRUE;
+		V.boot_code = true;
 		STKPTRbits.STKFUL = 0;
 		STKPTRbits.STKUNF = 0;
 	}
@@ -257,7 +257,7 @@ void init_fanmon(void)
 	WRITETIMER1(timer1_off);
 
 	/* Light-link data input */
-	COMM_ENABLE = TRUE; // for PICDEM4 onboard RS-232, not used on custom board
+	COMM_ENABLE = true; // for PICDEM4 onboard RS-232, not used on custom board
 
 	/*      work int thread setup */
 	INTCONbits.TMR0IE = 1; // enable int
@@ -280,10 +280,10 @@ uint8_t init_fan_params(void)
 {
 	V.spin_count1 = 0;
 	V.spin_count2 = 0;
-	V.spinning = FALSE;
-	V.valid = TRUE;
+	V.spinning = false;
+	V.valid = true;
 	V.spurious_int = 0;
-	V.comm = FALSE;
+	V.comm = false;
 	V.comm_state = 0;
 	V.led_pwm_set[1] = 128;
 	V.led_pwm_set[2] = 64;
@@ -294,10 +294,10 @@ void main(void)
 {
 	init_fanmon();
 	blink_led(3, ON, ON); // controller run indicator
-	blink_led_alt(TRUE);
+	blink_led_alt(true);
 
 	/* Loop forever */
-	while (TRUE) { // busy work
+	while (true) { // busy work
 		sw_work(); // run housekeeping
 		Nop();
 		Nop();
