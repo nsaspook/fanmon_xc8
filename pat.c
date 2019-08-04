@@ -54,6 +54,7 @@
  * 0.1  detect pulses and flash fan failure lamps if RPM is out of spec
  *	for the ebmpapst 4606 ZH
  * 0.2 XC8 stripped version
+ * 0.3 XC8 2.05 interrupt fix
  */
 
 #include <xc.h>
@@ -86,7 +87,7 @@ spacer0[] = " ",
 
 #pragma warning disable 752  // disable compiler bug for 8 bit math
 
-void interrupt high_priority tm_handler(void) // timer/serial functions are handled here
+void __interrupt() tm_handler(void) // timer/serial functions are handled here
 {
 	static uint8_t led_cache = 0xff;
 	static uint16_t total_spins = 0;
